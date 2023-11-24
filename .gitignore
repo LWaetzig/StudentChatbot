@@ -129,3 +129,6 @@ dmypy.json
 # exclude documentation
 *.mp4
 *.pdf
+
+# exclude node mdoules
+node_modules
