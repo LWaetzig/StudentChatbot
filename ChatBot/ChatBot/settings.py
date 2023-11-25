@@ -41,6 +41,7 @@ INSTALLED_APPS = [
 
     # own apps
     "StudentGPT",
+    "fontawesomefree",
 ]
 
 MIDDLEWARE = [
@@ -124,6 +125,9 @@ STATICFILES_DIRS = [
     APP_DIR / "static",
 ]
 STATIC_ROOT = BASE_DIR / "static"
+
+MEDIA_URL = 'media/'
+MEDIA_ROOT = APP_DIR / "media"
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 

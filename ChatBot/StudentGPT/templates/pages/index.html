@@ -1,3 +1,126 @@
 {% extends "base.html" %} {% block content %}
+<div class="flex h-full">
+  <div class="w-1/4 p-4 border-r">
+    <!--left row-->
+    <div class="flex flex-row m-4 items-center">
+      <img src="#" />
+      <h1 class="ml-4 text-2xl">STUDENTGPT</h1>
+    </div>
+    <div class="justify-center">
+      <!--Upload file container-->
+      <div class="m-4">
+        <div class="flex items-center justify-center w-full">
+          <form method="post" enctype="multipart/form-data" action="{% url 'home' %}">
+            {% csrf_token %}
+            <label for="dropzone-file"
+              class="flex flex-col items-center justify-center w-full h-64 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 dark:hover:bg-bray-800 dark:bg-gray-700 hover:bg-gray-100 dark:border-gray-600 dark:hover:border-gray-500 dark:hover:bg-gray-600">
+              <div class="flex flex-col items-center justify-center pt-5 pb-6">
+                <svg class="w-8 h-8 mb-4 text-gray-500 dark:text-gray-400" aria-hidden="true"
+                  xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 16">
+                  <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M13 13h3a3 3 0 0 0 0-6h-.025A5.56 5.56 0 0 0 16 6.5 5.5 5.5 0 0 0 5.207 5.021C5.137 5.017 5.071 5 5 5a4 4 0 0 0 0 8h2.167M10 15V6m0 0L8 8m2-2 2 2" />
+                </svg>
+                <p class="mb-2 text-sm text-gray-500 dark:text-gray-400 text-center">
+                  <span class="font-semibold">Click to upload</span> or drag and
+                  drop
+                </p>
+                <p class="text-xs text-gray-500 dark:text-gray-400 text-center">
+                  SVG, PNG, JPG or GIF (MAX. 800x400px)
+                </p>
+              </div>
+              <input id="dropzone-file" type="file" class="hidden" />
+            </label>
+          </form>
+        </div>
+      </div>
+      <!---->
+      <!--Show uploaded Files-->
+      <div id="uploadedFileContainer" class="mt-4 hidden bg-white dark:bg-gray-800 p-4 rounded-lg shadow-md">
+        <div class="flex items-center justify-between mb-2">
+          <div class="flex items-center">
+            <div>
+              <p class="text-sm font-semibold text-gray-700 dark:text-gray-300">
+                Uploaded File:
+              </p>
+              <p id="uploadedFileName" class="text-sm text-gray-500 dark:text-gray-400"></p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!---->
+      <!--Process button-->
+      <div class="flex flex-col items-center m-4">
+        <button class="text-white py-2 px-4 rounded border-2 hover:bg-white hover:text-black"
+          onclick="sendFiletoServer()">Process</button>
+      </div>
+    </div>
+  </div>
+  <div class="w-3/4 p-4 relative">
+    <!--right row-->
+    <div class="flex flex-row m-3 justify-between items-center">
+      <h1 class="ml-4 text-2xl">CHAT</h1>
+      <button class="text-white py-2 px-4 rounded border-2">
+        <i class="fa-solid fa-bars fa-lg"></i>
+      </button>
+    </div>
+    <div id="messageContainer" class="mt-4"></div>
+    <div class="absolute bottom-0 left-0 w-full p-4">
+      <div class="flex item-center gap-x-2">
+        <input id="messageInput" type="text" placeholder="Type your message..."
+          class="w-full p-2 border rounded text-black" />
+        <button onclick="sendMessage()" id="sendButton"
+          class="text-white py-2 px-4 rounded border-2 hover:bg-white hover:text-black">
+          <i class="fa-regular fa-paper-plane"></i>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  document.getElementById("dropzone-file").addEventListener("change", handleUpload);
+
+  function handleUpload(event) {
+    const uploadedFile = event.target;
+    const file = uploadedFile.files[0];
+
+    displayUploadedFile(file);
+    sendFiletoServer(file);
+  }
+
+  function displayUploadedFile(file) {
+    const container = document.getElementById("uploadedFileContainer");
+    const fileNameElement = document.getElementById("uploadedFileName");
+
+    container.classList.remove("hidden");
+    fileNameElement.textContent = file.name;
+  }
+
+  function sendFiletoServer(file) {
+    const formData = new FormData();
+    formData.append("file", file);
+
+    const token = getCookie("csrftoken");
+
+    fetch("", {
+      method: "POST",
+      headers: {
+        "X-CSRFToken": token,
+      },
+      body: formData,
+    }).then((response) => response.json()).then(data => {
+      console.log("Server Response: ", data)
+    }).catch(error => {
+      console.log("Error: ", error)
+    })
+  }
+  function getCookie(name) {
+    const cookieValue = document.cookie.match('(^|;)\\s*' + name + '\\s*=\\s*([^;]+)');
+    return cookieValue ? cookieValue.pop() : '';
+  }
+
+
+</script>
 
 {% endblock %}
+</div>
