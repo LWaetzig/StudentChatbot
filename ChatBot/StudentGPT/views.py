@@ -1,7 +1,7 @@
 import os
+import json
 from django.shortcuts import render
 from django.http import JsonResponse
-from reportlab.pdfgen import canvas
 
 # Create your views here.
 def index(request):
@@ -15,6 +15,19 @@ def index(request):
                 f.write(chunk)
 
         return JsonResponse({"status": "success"})
-    else:
-        print("No file")
+
+    if request.method == "DELETE":
+        try:
+            data = json.loads(request.body.decode("utf-8"))
+            filename = data.get("fileName")
+
+            if filename:
+                file_path = os.path.join(BASE_DIR, "media", "uploads", filename)
+                os.remove(file_path)
+                return JsonResponse({"status": "success"})
+            else:
+                return JsonResponse({"status": "File name not provided"}, status=400)
+        except Exception as e:
+            return JsonResponse({"status": "failed"}, status=500)
+
     return render(request, 'pages/index.html')
