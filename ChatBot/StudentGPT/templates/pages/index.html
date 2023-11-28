@@ -66,8 +66,8 @@
         <i class="fa-solid fa-bars fa-lg"></i>
       </button>
     </div>
-    <div id="messageContainer" class="flex mt-4 w-full">
-
+    <div id="messageContainer" class="flex flex-col mt-4 w-full">
+      <!-- Questions and responses are displayed here -->
     </div>
     <div class="absolute bottom-0 left-0 w-full p-4">
       <div class="flex item-center gap-x-2">
@@ -175,24 +175,51 @@
         body: formData
       })
         .then(response => response.json())
+        .then(data => {
+          if (data.status === "success") {
+            const botResponse = data.response
+            displayMessage(botResponse, "bot")
+          }
+        })
         .catch(error => console.log(error))
     }
+    document.getElementById("messageInput").value = ""
   }
 
   function displayMessage(message, sender) {
-    const messageContainer = document.getElementById("messageContainer")
-    const messageElement = document.createElement("div")
+    const messageContainer = document.getElementById("messageContainer");
+    const messageWrapper = document.createElement("div");
+    const messageElement = document.createElement("div");
+    const icon = document.createElement("i");
+
+    messageElement.classList.add("max-w-xs", "mx-2", "my-1", "break-all", "p-3");
+    messageWrapper.classList.add("flex", "items-center");
 
     if (sender === "user") {
-      messageElement.classList.add("border-2", "border-sky-500", "rounded", "p-3", "m-3", "text-white", "bg-sky-500")
-      messageElement.textContent = message
+      // style user message
+      icon.classList.add("fa-solid", "fa-user", "fa-xl", "border-2", "rounded-full", "ml-2", "p-2");
+      messageWrapper.classList.add("flex-row-reverse", "justify-items-end");
+      messageElement.classList.add("bg-white", "text-black", "rounded-tl-xl", "rounded-tr-xl", "rounded-bl-xl", "rounded-br-none", "self-end");
     } else if (sender === "bot") {
-      messageElement.classList.add("flex", "flex-row", "justify-between", "items-center", "m-3")
-      messageElement.textContent = message
+      // style bot message
+      icon.classList.add("fa-solid", "fa-robot", "fa-xl", "border-2", "rounded-full", "mr-2", "p-2");
+      messageWrapper.classList.add("flex-row", "justify-items-start");
+      messageElement.classList.add("bg-black", "text-white", "rounded-tr-xl", "rounded-tl-xl", "rounded-br-xl", "rounded-bl-none", "self-start");
     }
 
-    messageContainer.appendChild(messageElement)
+    // add icon to message wrapper
+    messageWrapper.appendChild(icon);
+
+    // add message to message element
+    messageElement.innerHTML = message;
+
+    // add message element to message wrapper
+    messageWrapper.appendChild(messageElement);
+
+    // add message wrapper to message container
+    messageContainer.appendChild(messageWrapper);
   }
+
 
 
 

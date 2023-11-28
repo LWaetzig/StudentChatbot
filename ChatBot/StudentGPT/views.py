@@ -15,6 +15,13 @@ def index(request):
                 f.write(chunk)
 
         return JsonResponse({"status": "success"})
+    
+    if request.method == "POST" and request.POST.get("message"):
+        message = request.POST["message"]
+        print(message)
+        bot_response = "Hello, I am a chatbot. I am still learning."
+        return JsonResponse({"status" : "success", "response" : bot_response})
+
 
     if request.method == "DELETE":
         try:
