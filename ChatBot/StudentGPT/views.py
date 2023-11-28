@@ -2,6 +2,8 @@ import os
 import json
 from django.shortcuts import render
 from django.http import JsonResponse
+from .src.Chatbot import get_bot_response
+
 
 # Create your views here.
 def index(request):
@@ -18,8 +20,7 @@ def index(request):
     
     if request.method == "POST" and request.POST.get("message"):
         message = request.POST["message"]
-        print(message)
-        bot_response = "Hello, I am a chatbot. I am still learning."
+        bot_response = get_bot_response(message)
         return JsonResponse({"status" : "success", "response" : bot_response})
 
 
