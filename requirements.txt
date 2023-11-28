@@ -1,2 +1,0 @@
-Django==4.2.7
-django-tailwind==3.6.0
