@@ -71,8 +71,8 @@
     </div>
     <div class="absolute bottom-0 left-0 w-full p-4">
       <div class="flex item-center gap-x-2">
-        <input id="messageInput" type="text" placeholder="Type your message..."
-          class="w-full p-2 border rounded text-black focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 placeholder:italic placeholder:text-slate-400" />
+        <textarea id="messageInput" type="text" placeholder="Type your message..."
+          class="w-full p-2 border rounded text-black focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 placeholder:italic placeholder:text-slate-400 resize-none"></textarea>
         <button onclick="sendMessage()" id="sendBtn"
           class="text-white py-2 px-4 rounded border-2 hover:bg-white hover:text-black">
           <i class="fa-regular fa-paper-plane"></i>
@@ -218,6 +218,9 @@
 
     // add message wrapper to message container
     messageContainer.appendChild(messageWrapper);
+
+    // Auto-scroll to the latest message
+    messageContainer.scrollTop = messageContainer.scrollHeight;
   }
 
 
