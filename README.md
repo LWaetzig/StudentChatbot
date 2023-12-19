@@ -11,9 +11,7 @@
 1. Clone Repository
 2. Create a virtual python environment -> [Link](https://realpython.com/lessons/creating-virtual-environment/)
 3. Install required packages listed in [requirements.txt](./requirements.txt)
-4. The Website is build using tailwindcss, so you need to install it using npm -> ```npm install -D tailwindcss```
-5. Run the command ```kaggle kernels output skillinho/nlp-finetuning-bart -p bart-samsum-model``` in your environment to load the finetuned BART model from its original kaggle location.
-6. If all requirements are installed successfully, run django server ```python manage.py runserver```
+4. The Application is build using streamlit. To run the app execute the following command in the projects directory ```streamlit run app.py```
 
 
 ## Collaborators
