@@ -132,3 +132,6 @@ dmypy.json
 
 # exclude node mdoules
 node_modules
+
+#exclude the finetuned model
+bart-samsum-model/**
