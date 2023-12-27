@@ -42,7 +42,7 @@ with st.sidebar:
     )
 
     add_vertical_space(2)
-    uploaded_file = st.file_uploader("Datei auswählen", type=["pdf"])
+    uploaded_file = st.file_uploader("Datei auswählen", type=["pdf", "txt"])
     if uploaded_file is not None:
         print(uploaded_file)
         FileProcessor = FileProcessor(uploaded_file)
