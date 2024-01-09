@@ -35,8 +35,8 @@ with st.sidebar:
 
     model = st.selectbox(
         "Model",
-        ("T5", "GPT-3", "LLama 2", "BERT"),
-        index=None,
+        ("T5", "BART"),
+        index=0, # selects T5 as default model
         placeholder="Select a model...",
         disabled=False,
     )
@@ -63,12 +63,22 @@ if prompt := st.chat_input():
         st.write(prompt)
 
     # generate response
-    response = Chatbot().call_t5_model(prompt)
+    chatbot_instance = Chatbot()
+    response = getattr(chatbot_instance, f"call_{model}")(prompt)
     print(response)
+    print(model)
+
     st.session_state.messages.append({"role": "assistant", "content": response})
     with st.chat_message(name="assistant", avatar="🤖"):
         message_placeholder = st.empty()
-        full_response = response[0]["translation_text"]
+        content_key = response[1]
+        # catch error that arise due to model is not available
+        first_token = list(response[0][0].keys())[0]
+        print(first_token)
+        if first_token == "error":
+            full_response = "I apologize, but there is an issue with the model in the background. Please try another model or ask me later again"
+        else:
+            full_response = response[0][0][content_key]
 
         # for chunk in response.split():
         #     full_response += chunk + " "
