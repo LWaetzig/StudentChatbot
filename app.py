@@ -35,10 +35,10 @@ with st.sidebar:
 
     model = st.selectbox(
         "Model",
-        ("GPT-3", "LLama 2", "BERT"),
+        ("T5", "GPT-3", "LLama 2", "BERT"),
         index=None,
         placeholder="Select a model...",
-        disabled=True,
+        disabled=False,
     )
 
     add_vertical_space(2)
@@ -63,14 +63,15 @@ if prompt := st.chat_input():
         st.write(prompt)
 
     # generate response
-    response = Chatbot.generate_response(prompt)
-    st.session_state.messages.append({"role": "jarvis", "content": response})
+    response = Chatbot().call_t5_model(prompt)
+    print(response)
+    st.session_state.messages.append({"role": "assistant", "content": response})
     with st.chat_message(name="assistant", avatar="🤖"):
         message_placeholder = st.empty()
-        full_response = ""
+        full_response = response[0]["translation_text"]
 
-        for chunk in response.split():
-            full_response += chunk + " "
-            time.sleep(0.1)
-            message_placeholder.markdown(full_response + "▌")
+        # for chunk in response.split():
+        #     full_response += chunk + " "
+        #     time.sleep(0.1)
+        #     message_placeholder.markdown(full_response + "▌")
         message_placeholder.markdown(full_response)
