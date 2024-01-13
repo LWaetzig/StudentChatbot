@@ -6,6 +6,8 @@ from streamlit_extras.add_vertical_space import add_vertical_space
 from utils.Chatbot import Chatbot
 from utils.FileProcessor import FileProcessor
 
+# TODO: fixing the bug where the full pdf processing is run again when the user inputs a new prompt
+
 # site config
 st.set_page_config(
     page_title="JARVIS",
@@ -33,22 +35,40 @@ with st.sidebar:
 
     add_vertical_space(2)
 
+    # select model
     model = st.selectbox(
         "Model",
-        ("T5", "BART"),
-        index=0, # selects T5 as default model
+        ("T5", "BART", "Custom"),
+        index=0,  # selects T5 as default model
         placeholder="Select a model...",
         disabled=False,
     )
+    if model == "T5" or model == "BART":
+        st.info(
+            "The model is embedded using huggingface api. Please provide a valid api token. See https://huggingface.co/docs/api-inference/quicktour#get-your-api-token for more information."
+        )
+        api_token = st.text_input("API Token", "")
+        if api_token != "":
+            st.success("API Token set")
+        else:
+            st.error("Please provide a valid API Token")
+    else:
+        st.info(
+            "Custom models are not implemented yet. Please use T5 or BART. See https://huggingface.co/models for more information."
+        )
 
     add_vertical_space(2)
-    uploaded_file = st.file_uploader("Datei auswählen", type=["pdf", "txt"])
+    # component to upload and process file
+    uploaded_file = st.file_uploader("Upload file", type=["pdf", "txt"])
     if uploaded_file is not None:
-        print(uploaded_file)
         FileProcessor = FileProcessor(uploaded_file)
-        with st.spinner("Processing file..."):
-            FileProcessor.process()
-            st.success("Done!")
+        with st.status("Processing file...", expanded=True) as status:
+            st.write("Extracting text from file")
+            FileProcessor.process_pdf()
+            time.sleep(1)
+            st.write("Splitting text into chunks")
+            time.sleep(1)
+            status.update(label="Done!", state="complete", expanded=False)
 
 
 # display stored messages
@@ -57,31 +77,31 @@ for message in st.session_state.messages:
     with st.chat_message(name=message["role"], avatar=avatar):
         st.markdown(message["content"])
 
-if prompt := st.chat_input():
+# chat input
+prompt = st.chat_input()
+if prompt:
     st.session_state.messages.append({"role": "user", "content": prompt})
     with st.chat_message(name="user", avatar="🧑‍💻"):
         st.write(prompt)
 
-    # generate response
-    chatbot_instance = Chatbot()
-    response = getattr(chatbot_instance, f"call_{model}")(prompt)
-    print(response)
-    print(model)
+    # get matched documents based on prompt
+    if uploaded_file:
+        print(uploaded_file.name)
+        response = FileProcessor.get_matched_documents(prompt, uploaded_file.name)
+        st.write(response)
 
-    st.session_state.messages.append({"role": "assistant", "content": response})
-    with st.chat_message(name="assistant", avatar="🤖"):
-        message_placeholder = st.empty()
-        content_key = response[1]
-        # catch error that arise due to model is not available
-        first_token = list(response[0][0].keys())[0]
-        print(first_token)
-        if first_token == "error":
-            full_response = "I apologize, but there is an issue with the model in the background. Please try another model or ask me later again"
-        else:
-            full_response = response[0][0][content_key]
+    # else:
+    #     # generate response
+    #     chatbot = Chatbot(model, api_token)
+    #     response = chatbot.generate_response(prompt)
 
-        # for chunk in response.split():
-        #     full_response += chunk + " "
-        #     time.sleep(0.1)
-        #     message_placeholder.markdown(full_response + "▌")
-        message_placeholder.markdown(full_response)
+    # display response
+    # st.session_state.messages.append({"role": "assistant", "content": response})
+    # with st.chat_message(name="assistant", avatar="🤖"):
+    #     message_placeholder = st.empty()
+    #     full_response = str()
+    #     for chunk in response.split():
+    #         full_response += chunk + " "
+    #         time.sleep(0.1)
+    #         message_placeholder.markdown(full_response + "▌")
+    #     message_placeholder.markdown(full_response[:-1])
