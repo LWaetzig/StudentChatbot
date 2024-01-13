@@ -11,19 +11,23 @@ from rake_nltk import Rake
 from scipy.signal import argrelextrema
 from sentence_transformers import SentenceTransformer
 from sklearn.metrics.pairwise import cosine_similarity
+from langchain.embeddings import HuggingFaceEmbeddings
+from langchain.vectorstores import FAISS
+
 
 logger.basicConfig(level=logger.INFO)
+# TODO: implement function to get matched documents based in user prompt
 # TODO: add logging to file
 # TODO: check for syntax and formatting
 # TODO: add comments
 
 
 class FileProcessor:
-    def __init__(self, pdf_file_path: os.path):
+    def __init__(self, file):
         logger.info("Initializing FileProcessor")
         # read in pdf document
         try:
-            self.document = fitz.open(pdf_file_path)
+            self.document = fitz.open(file)
             logger.info("PDF document loaded")
         except Exception as e:
             logger.error(f"Could not open PDF file: {e}")
@@ -183,8 +187,8 @@ class FileProcessor:
             """CREATE TABLE IF NOT EXISTS chunks (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
                 file_name TEXT,
-                chunk_text TEXT UNIQUE,
-                keywords TEXT)"""
+                chunk_text TEXT UNIQUE
+                )"""
         )
         text_chunk = str()
         for split_point, sentence in enumerate(sentences):
@@ -192,26 +196,44 @@ class FileProcessor:
             if split_point in split_points:
                 rake.extract_keywords_from_text(text_chunk)
                 extracted_keywords = rake.get_ranked_phrases()[:5]
-                keywords = ", ".join(extracted_keywords)
                 db_cursor.execute(
-                    """INSERT OR IGNORE INTO chunks (file_name, chunk_text, keywords) 
-                        VALUES (?, ?, ?)""",
-                    (filename, text_chunk, keywords),
+                    """INSERT OR IGNORE INTO chunks (file_name, chunk_text) 
+                        VALUES (?, ?)""",
+                    (filename, text_chunk),
                 )
                 db_connect.commit()
                 text_chunk = str()
         if text_chunk != str():
             rake.extract_keywords_from_text(text_chunk)
-            extracted_keywords = rake.get_ranked_phrases()[:5]
-            keywords = ", ".join(extracted_keywords)
             db_cursor.execute(
-                """INSERT OR IGNORE INTO chunks (file_name, chunk_text, keywords) 
-                        VALUES (?, ?, ?)""",
-                (filename, text_chunk, keywords),
+                """INSERT OR IGNORE INTO chunks (file_name, chunk_text) 
+                        VALUES (?, ?)""",
+                (filename, text_chunk),
             )
             db_connect.commit()
         db_connect.close()
         logger.info("Chunks stored in database")
+
+    def get_matched_documents(
+        self, prompt: str, file_name: str, db_path: str = "chunks.db"
+    ) -> list:
+        print(file_name)
+        # connect to database
+        db_connect = sqlite3.connect(db_path)
+        db_cursor = db_connect.cursor()
+        db_cursor.execute(
+            """SELECT chunk_text FROM chunks WHERE file_name = ?""", (file_name,)
+        )
+        chunks = [each[0] for each in db_cursor.fetchall()]
+
+        db_connect.close()
+        print(chunks)
+
+        embeddings = HuggingFaceEmbeddings()
+        vector_store = FAISS.from_texts(chunks, embeddings)
+        matched_documents = vector_store.similarity_search(prompt)
+
+        return matched_documents
 
     def process_pdf(self, **kwargs) -> dict:
         """wrapper function to handle processing of pdf document
