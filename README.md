@@ -2,6 +2,8 @@
 
 ## What is it
 
+Process is as follows:
+![process.png](data/process.png)
 
 
 ## Requirements
@@ -15,7 +17,6 @@
 5. Paste a valid HuggingFace Access Token in the Chatbot.py file (line 9)
 
 
-# Note Adrian: To get it running I also had to install with pip: fitz, PyMuPDF, frontend and tools
 
 ## Collaborators
 + Lars Kurschilgen (3694647)
@@ -23,3 +24,4 @@
 + Alexander Paul (5722106)
 + Adrian Setz (6483663)
 + Lucas Wätzig (8167493)
++ Jan Wolter ()
