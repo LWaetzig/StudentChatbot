@@ -13,13 +13,15 @@ from sentence_transformers import SentenceTransformer
 from sklearn.metrics.pairwise import cosine_similarity
 from langchain.embeddings import HuggingFaceEmbeddings
 from langchain.vectorstores import FAISS
-
+import nltk
+nltk.download(['stopwords', 'punkt'])
 
 logger.basicConfig(level=logger.INFO)
 # TODO: implement function to get matched documents based in user prompt
 # TODO: add logging to file
 # TODO: check for syntax and formatting
 # TODO: add comments
+# TODO: implement method to preprocess also .txt files (currently only pdf, compare line 34)
 
 
 class FileProcessor:
