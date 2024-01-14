@@ -16,10 +16,11 @@ class Chatbot:
         headers = {"Authorization": f"Bearer {self.API_TOKEN}"}
         message = {"inputs": message, "parameters": {"num_beams": 3}}
         response = requests.post(self.API_URL, headers=headers, json=message)
+        print(response.text) # only used for bugfixing
         if response.status_code == 200:
             if self.model == "T5":
-                return response[0].get("translation_text")
+                return response.json()[0].get("translation_text")
             elif self.model == "BART":
-                return response[0].get("summary_text")
+                return response.json()[0].get("summary_text")
         else:
             return "Error: Could not generate response. Maybe check your API Token?"

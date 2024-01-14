@@ -51,7 +51,7 @@ with st.sidebar:
         if api_token != "":
             st.success("API Token set")
         else:
-            st.error("Please provide a valid API Token")
+            st.error("Please provide a valid API Token from your Huggingface account")
     else:
         st.info(
             "Custom models are not implemented yet. Please use T5 or BART. See https://huggingface.co/models for more information."
@@ -60,11 +60,12 @@ with st.sidebar:
     add_vertical_space(2)
     # component to upload and process file
     uploaded_file = st.file_uploader("Upload file", type=["pdf", "txt"])
+    print(uploaded_file) # only used for bugfixing
     if uploaded_file is not None:
-        FileProcessor = FileProcessor(uploaded_file)
+        file_processor = FileProcessor(uploaded_file)
         with st.status("Processing file...", expanded=True) as status:
             st.write("Extracting text from file")
-            FileProcessor.process_pdf()
+            file_processor.process_pdf()
             time.sleep(1)
             st.write("Splitting text into chunks")
             time.sleep(1)
@@ -90,18 +91,18 @@ if prompt:
         response = FileProcessor.get_matched_documents(prompt, uploaded_file.name)
         st.write(response)
 
-    # else:
-    #     # generate response
-    #     chatbot = Chatbot(model, api_token)
-    #     response = chatbot.generate_response(prompt)
+    else:
+        # generate response
+        chatbot = Chatbot(model, api_token)
+        response = chatbot.generate_response(prompt)
 
     # display response
-    # st.session_state.messages.append({"role": "assistant", "content": response})
-    # with st.chat_message(name="assistant", avatar="🤖"):
-    #     message_placeholder = st.empty()
-    #     full_response = str()
-    #     for chunk in response.split():
-    #         full_response += chunk + " "
-    #         time.sleep(0.1)
-    #         message_placeholder.markdown(full_response + "▌")
-    #     message_placeholder.markdown(full_response[:-1])
+    st.session_state.messages.append({"role": "assistant", "content": response})
+    with st.chat_message(name="assistant", avatar="🤖"):
+        message_placeholder = st.empty()
+        full_response = str()
+        for chunk in response.split():
+            full_response += chunk + " "
+            time.sleep(0.1)
+            message_placeholder.markdown(full_response + "▌")
+        message_placeholder.markdown(full_response[:-1])

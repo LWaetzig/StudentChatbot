@@ -25,9 +25,11 @@ logger.basicConfig(level=logger.INFO)
 class FileProcessor:
     def __init__(self, file):
         logger.info("Initializing FileProcessor")
+        self.document = None
         # read in pdf document
         try:
-            self.document = fitz.open(file)
+            file_content = file.getvalue()
+            self.document = fitz.open("pdf", file_content)
             logger.info("PDF document loaded")
         except Exception as e:
             logger.error(f"Could not open PDF file: {e}")
@@ -285,6 +287,7 @@ class FileProcessor:
                 visualize_splitting=visualize_splitting,
                 db_path=db_path,
             )
+            logger.info(f"Database file created at: {db_path}")
 
         except Exception as e:
             logger.error(f"Error splittin text into chunks: {e}")
