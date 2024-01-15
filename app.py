@@ -66,12 +66,11 @@ with st.sidebar:
     uploaded_file = st.file_uploader("Upload file", type=["pdf", "txt"])
     print(uploaded_file) # only used for bugfixing
     if uploaded_file is not None:
-
+        file_processor = FileProcessor(uploaded_file)
         # check status of uploaded file and preprocess file only if it is new
         if uploaded_file.name != st.session_state.file_info['file_name']:
             st.session_state.file_info['file_name'] = uploaded_file.name
             st.session_state.file_info['last_uploaded'] = uploaded_file
-            file_processor = FileProcessor(uploaded_file)
             with st.status("Processing file...", expanded=True) as status:
                 st.write("Extracting text from file")
                 file_processor.process_pdf()
@@ -99,7 +98,7 @@ if prompt:
     # get matched documents based on prompt
     if uploaded_file:
         print(uploaded_file.name)
-        response = FileProcessor.get_matched_documents(prompt, uploaded_file.name)
+        response = file_processor.get_matched_documents(prompt, uploaded_file.name)
         st.write(response)
 
     else:

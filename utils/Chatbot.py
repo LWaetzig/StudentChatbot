@@ -1,5 +1,6 @@
 import requests
 
+# TODO: implement condition, that error messages sent from the model (e.g.:{"error":"Model t5-large is currently loading","estimated_time":118.0269775390625}) are displayed in the chat
 
 class Chatbot:
     def __init__(self, model: str, api_token: str) -> None:

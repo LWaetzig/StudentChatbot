@@ -21,7 +21,8 @@ logger.basicConfig(level=logger.INFO)
 # TODO: add logging to file
 # TODO: check for syntax and formatting
 # TODO: add comments
-# TODO: implement method to preprocess also .txt files (currently only pdf, compare line 34)
+# TODO: implement method to preprocess also .txt files (currently only pdf, compare line 35)
+# TODO: fix the bug that the filename is currently not written to db (compare line 288)
 
 
 class FileProcessor:
@@ -282,10 +283,11 @@ class FileProcessor:
             self.document_content["images"][i] = images
 
         logger.info("Splitting text into chunks")
+        logger.info(self.document.name)
         try:
             self.split_text_into_chunks(
                 text=self.document_content["text"],
-                filename=os.path.basename(self.document.name),
+                filename=os.path.basename(self.document.name), #this seems not to work
                 visualize_splitting=visualize_splitting,
                 db_path=db_path,
             )
