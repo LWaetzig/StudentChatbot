@@ -38,12 +38,12 @@ with st.sidebar:
     # select model
     model = st.selectbox(
         "Model",
-        ("T5", "BART", "Custom"),
+        ("T5", "BART", "QA_BERTA", "Custom"),
         index=0,  # selects T5 as default model
         placeholder="Select a model...",
         disabled=False,
     )
-    if model == "T5" or model == "BART":
+    if model == "T5" or model == "BART" or model == "QA_BERTA":
         st.info(
             "The model is embedded using huggingface api. Please provide a valid api token. See https://huggingface.co/docs/api-inference/quicktour#get-your-api-token for more information."
         )
@@ -99,7 +99,10 @@ if prompt:
     if uploaded_file:
         print(uploaded_file.name)
         response = file_processor.get_matched_documents(prompt, uploaded_file.name)
-        st.write(response)
+        response = [document.page_content for document in response][0]
+        # st.write(response)
+        chatbot = Chatbot(model, api_token)
+        response = chatbot.generate_response({"question": prompt, "context": response})
 
     else:
         # generate response

@@ -9,9 +9,9 @@ class Chatbot:
         if self.model == "T5":
             self.API_URL = "https://api-inference.huggingface.co/models/t5-large"
         elif self.model == "BART":
-            self.API_URL = (
-                "https://api-inference.huggingface.co/models/facebook/bart-large-cnn"
-            )
+            self.API_URL = "https://api-inference.huggingface.co/models/facebook/bart-large-cnn"
+        elif self.model == "QA_BERTA":
+            self.API_URL = "https://api-inference.huggingface.co/models/timpal0l/mdeberta-v3-base-squad2"
 
     def generate_response(self, message: str) -> str:
         headers = {"Authorization": f"Bearer {self.API_TOKEN}"}
@@ -23,5 +23,7 @@ class Chatbot:
                 return response.json()[0].get("translation_text")
             elif self.model == "BART":
                 return response.json()[0].get("summary_text")
+            elif self.model == "QA_BERTA":
+                return response.json().get("answer")
         else:
             return "Error: Could not generate response. Maybe check your API Token?"
