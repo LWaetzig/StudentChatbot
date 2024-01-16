@@ -22,7 +22,6 @@ logger.basicConfig(level=logger.INFO)
 # TODO: check for syntax and formatting
 # TODO: add comments
 # TODO: implement method to preprocess also .txt files (currently only pdf, compare line 35)
-# TODO: fix the bug that the filename is currently not written to db (compare line 288)
 
 
 class FileProcessor:
@@ -33,6 +32,7 @@ class FileProcessor:
         try:
             file_content = file.getvalue()
             self.document = fitz.open("pdf", file_content)
+            self.document.name = file.name
             logger.info("PDF document loaded")
         except Exception as e:
             logger.error(f"Could not open PDF file: {e}")
@@ -287,7 +287,7 @@ class FileProcessor:
         try:
             self.split_text_into_chunks(
                 text=self.document_content["text"],
-                filename=os.path.basename(self.document.name), #this seems not to work
+                filename=os.path.basename(self.document.name),
                 visualize_splitting=visualize_splitting,
                 db_path=db_path,
             )
