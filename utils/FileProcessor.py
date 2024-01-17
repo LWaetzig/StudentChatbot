@@ -6,15 +6,11 @@ import sqlite3
 import fitz
 import matplotlib.pyplot as plt
 import numpy as np
-from langdetect import detect
-from rake_nltk import Rake
 from scipy.signal import argrelextrema
 from sentence_transformers import SentenceTransformer
 from sklearn.metrics.pairwise import cosine_similarity
 from langchain.embeddings import HuggingFaceEmbeddings
 from langchain.vectorstores import FAISS
-import nltk
-nltk.download(['stopwords', 'punkt'])
 
 logger.basicConfig(level=logger.INFO)
 # TODO: implement function to get matched documents based in user prompt
@@ -27,11 +23,9 @@ logger.basicConfig(level=logger.INFO)
 class FileProcessor:
     def __init__(self, file):
         logger.info("Initializing FileProcessor")
-        self.document = None
         # read in pdf document
         try:
-            file_content = file.getvalue()
-            self.document = fitz.open("pdf", file_content)
+            self.document = fitz.open(file)
             self.document.name = file.name
             logger.info("PDF document loaded")
         except Exception as e:
@@ -167,14 +161,11 @@ class FileProcessor:
         visualize_splitting: bool = False,
         db_path: str = "chunks.db",
     ) -> None:
-        doc_lang = detect(text)
-        rake = Rake(language="german" if doc_lang == "de" else "en")
-
-        logger.info("Loading model")
+        logger.info("Sentence transformer model")
         model = SentenceTransformer("sentence-transformers/all-MiniLM-L6-v2")
         sentences = text.split(". ")
 
-        logger.info("Encoding sentences")
+        logger.info("Create embeddings for sentences")
         embeddings = model.encode(sentences)
         similarities = cosine_similarity(embeddings, embeddings)
         logger.info("Calculating activated similarities")
@@ -199,8 +190,6 @@ class FileProcessor:
         for split_point, sentence in enumerate(sentences):
             text_chunk += sentence + ". "
             if split_point in split_points:
-                rake.extract_keywords_from_text(text_chunk)
-                extracted_keywords = rake.get_ranked_phrases()[:5]
                 db_cursor.execute(
                     """INSERT OR IGNORE INTO chunks (file_name, chunk_text) 
                         VALUES (?, ?)""",
@@ -209,7 +198,6 @@ class FileProcessor:
                 db_connect.commit()
                 text_chunk = str()
         if text_chunk != str():
-            rake.extract_keywords_from_text(text_chunk)
             db_cursor.execute(
                 """INSERT OR IGNORE INTO chunks (file_name, chunk_text) 
                         VALUES (?, ?)""",
@@ -241,7 +229,7 @@ class FileProcessor:
         return matched_documents
 
     def process_pdf(self, **kwargs) -> dict:
-        """wrapper function to handle processing of pdf document
+        """Wrapper function to handle processing of pdf document
         Args:
             **kwargs: extract_text_from_image (bool), save_images (bool), image_save_path (str), visualize_splitting (bool), db_path (str)
         Returns:
