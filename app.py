@@ -5,10 +5,8 @@ from streamlit_extras.add_vertical_space import add_vertical_space
 
 from utils.Chatbot import Chatbot
 from utils.FileProcessor import FileProcessor
-from utils.utils import clear_chat
 
 # TODO: test how preprocessing behaves with more than one uploaded pdf
-
 # site config
 st.set_page_config(
     page_title="JARVIS",
