@@ -1,4 +1,5 @@
 import requests
+import json
 
 # TODO: implement condition, that error messages sent from the model (e.g.:{"error":"Model t5-large is currently loading","estimated_time":118.0269775390625}) are displayed in the chat
 
@@ -18,6 +19,11 @@ class Chatbot:
         message = {"inputs": message, "parameters": {"num_beams": 3}}
         response = requests.post(self.API_URL, headers=headers, json=message)
         print(response.text) # only used for bugfixing
+        response_data = json.loads(response.text)
+
+        if isinstance(response_data, dict) and "error" in response_data:
+            return f"Error in model response: {response_data['error']}"
+        
         if response.status_code == 200:
             if self.model == "T5":
                 return response.json()[0].get("translation_text")

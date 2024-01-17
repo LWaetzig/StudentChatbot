@@ -102,8 +102,10 @@ if prompt:
         response = [document.page_content for document in response][0]
         # st.write(response)
         chatbot = Chatbot(model, api_token)
-        response = chatbot.generate_response({"question": prompt, "context": response})
-
+        if model == "QA_BERTA":
+            response = chatbot.generate_response({"question": prompt, "context": response})
+        else:
+            st.error("WARNING: If you want to retrieve knowledge from your uploaded documents, please select the model QA_BERTA.")
     else:
         # generate response
         chatbot = Chatbot(model, api_token)
