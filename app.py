@@ -5,6 +5,7 @@ from streamlit_extras.add_vertical_space import add_vertical_space
 
 from utils.Chatbot import Chatbot
 from utils.FileProcessor import FileProcessor
+from utils.utils import clear_chat
 
 # TODO: test how preprocessing behaves with more than one uploaded pdf
 
@@ -59,18 +60,14 @@ with st.sidebar:
 
     add_vertical_space(2)
 
-    if 'file_info' not in st.session_state:
-        st.session_state.file_info = {'file_name': None, 'last_uploaded': None}
-        
     # component to upload and process file
     uploaded_file = st.file_uploader("Upload file", type=["pdf", "txt"])
-    print(uploaded_file) # only used for bugfixing
+
     if uploaded_file is not None:
         file_processor = FileProcessor(uploaded_file)
+
         # check status of uploaded file and preprocess file only if it is new
-        if uploaded_file.name != st.session_state.file_info['file_name']:
-            st.session_state.file_info['file_name'] = uploaded_file.name
-            st.session_state.file_info['last_uploaded'] = uploaded_file
+        if uploaded_file.name != st.session_state.file_info["file_name"]:
             with st.status("Processing file...", expanded=True) as status:
                 st.write("Extracting text from file")
                 file_processor.process_pdf()
@@ -78,8 +75,8 @@ with st.sidebar:
                 st.write("Splitting text into chunks")
                 time.sleep(1)
                 status.update(label="Done!", state="complete", expanded=False)
-        else:
-            st.write("No preprocessing needed!")
+
+    st.sidebar.button("Clear Chat History", on_click=clear_chat())
 
 
 # display stored messages
@@ -103,9 +100,13 @@ if prompt:
         # st.write(response)
         chatbot = Chatbot(model, api_token)
         if model == "QA_BERTA":
-            response = chatbot.generate_response({"question": prompt, "context": response})
+            response = chatbot.generate_response(
+                {"question": prompt, "context": response}
+            )
         else:
-            st.error("WARNING: If you want to retrieve knowledge from your uploaded documents, please select the model QA_BERTA.")
+            st.error(
+                "WARNING: If you want to retrieve knowledge from your uploaded documents, please select the model QA_BERTA."
+            )
     else:
         # generate response
         chatbot = Chatbot(model, api_token)
