@@ -8,4 +8,4 @@ def clear_chat():
 
 
 def reset_file():
-    st.session_state.file = [{"name": "", "processed": False}]
+    st.session_state.file = [{"name": "", "processed": False, "processor": None}]
