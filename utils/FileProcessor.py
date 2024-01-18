@@ -10,7 +10,7 @@ from scipy.signal import argrelextrema
 from sentence_transformers import SentenceTransformer
 from sklearn.metrics.pairwise import cosine_similarity
 
-logger.basicConfig(level=logger.DEBUG)
+logger.basicConfig(level=logger.INFO)
 # TODO: format document, add docstrings, add comments
 
 
