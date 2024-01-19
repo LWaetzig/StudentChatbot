@@ -125,7 +125,3 @@ if prompt and uploaded_file and st.session_state.file[0]["processed"] == True:
             time.sleep(0.1)
             message_placeholder.write(full_response + "▌")
         message_placeholder.markdown(full_response[:-1])
-
-
-print(st.session_state.messages)
-print(st.session_state.file)
