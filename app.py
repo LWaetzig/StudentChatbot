@@ -7,6 +7,9 @@ from utils.utils import clear_chat, reset_file
 from utils.FileProcessor import FileProcessor
 from utils.Chatbot import Chatbot
 
+# TODO: final formatting, add comments, etc.
+# TODO: handle normal question asking
+
 # site config
 st.set_page_config(
     page_title="JARVIS",
@@ -69,7 +72,7 @@ if uploaded_file and st.session_state.file[0]["processed"] == False:
         status.update(label="Done!", state="complete", expanded=False)
 
 
-# accept user input
+# accept raw user input
 prompt = st.chat_input()
 if prompt and not uploaded_file and st.session_state.file[0]["processed"] == False:
     # store user input in session_state
@@ -96,7 +99,7 @@ if prompt and not uploaded_file and st.session_state.file[0]["processed"] == Fal
             message_placeholder.write(full_response + "▌")
         message_placeholder.markdown(full_response[:-1])
 
-
+# accept user input related to uploaded file
 if prompt and uploaded_file and st.session_state.file[0]["processed"] == True:
     assistant = Chatbot()
     # store user input in session_state
