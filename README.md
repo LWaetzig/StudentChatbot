@@ -24,4 +24,4 @@ Process is as follows:
 + Alexander Paul (5722106)
 + Adrian Setz (6483663)
 + Lucas Wätzig (8167493)
-+ Jan Wolter ()
++ Jan Wolter (5222965)
