@@ -13,7 +13,7 @@ class Chatbot:
         )
         self.prompt = PromptTemplate(
             input_variables=["question", "context"],
-            template="You are a professor teaching a class. A student asks you '{question}'. You respons based on your knowledge: '{context}'",
+            template="You are a professor teaching a class. A student asks you '{question}'. You response is based on the fact that: '{context}'",
         )
         self.chain = LLMChain(prompt=self.prompt, llm=self.llm, verbose=True)
 
