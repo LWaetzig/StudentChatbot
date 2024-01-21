@@ -1,14 +1,16 @@
+import os
 import time
 
 import streamlit as st
 from streamlit_extras.add_vertical_space import add_vertical_space
 
-from utils.utils import clear_chat, reset_file
-from utils.FileProcessor import FileProcessor
 from utils.Chatbot import Chatbot
+from utils.FileProcessor import FileProcessor
+from utils.utils import clear_chat, reset_file
 
-# TODO: final formatting, add comments, etc.
+# TODO: final formatting, add comments, organize imports, etc.
 # TODO: handle normal question asking
+
 
 # site config
 st.set_page_config(
@@ -37,6 +39,13 @@ with st.sidebar:
     st.caption("Just A Rather Very Intelligent Student")
     st.divider()
 
+    # accept user input for HuggingFace API key and save in environment variable
+    os.environ["HUGGINGFACE_API_TOKEN"] = st.text_input(
+        "HuggingFace API Key", type="password"
+    )
+    if os.environ["HUGGINGFACE_API_TOKEN"]:
+        st.success("API Key saved!")
+
     add_vertical_space(2)
 
     uploaded_file = st.file_uploader(
@@ -45,7 +54,7 @@ with st.sidebar:
 
     add_vertical_space(2)
     # button to clear chat history
-    st.button("Clear Chat", on_click=clear_chat)
+    st.button("Clear Chat", on_click=clear_chat, use_container_width=True)
 
 
 # show predefined assistant message
