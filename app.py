@@ -119,12 +119,13 @@ if prompt and uploaded_file and st.session_state.file[0]["processed"] == True:
     # get matched documents based on prompt
     fp = st.session_state.file[0]["processor"]
     matched_documents = fp.get_matched_documents(prompt)
+
     # display matched documents
     with st.chat_message(name="assistant", avatar="🤖"):
         # generate response
         with st.spinner("Thinking..."):
             response = assistant.generate_answer(
-                prompt, matched_documents[0].page_content
+                prompt, " ".join([each.page_content for each in matched_documents])
             )
             st.session_state.messages.append({"role": "assistant", "content": response})
             time.sleep(2)
