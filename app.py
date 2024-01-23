@@ -6,11 +6,7 @@ from streamlit_extras.add_vertical_space import add_vertical_space
 
 from utils.Chatbot import Chatbot
 from utils.FileProcessor import FileProcessor
-from utils.utils import clear_chat, reset_file
-
-# TODO: final formatting, add comments, organize imports, etc.
-# TODO: handle normal question asking
-
+from utils.helper import clear_chat, reset_file
 
 # site config
 st.set_page_config(
@@ -39,7 +35,14 @@ with st.sidebar:
     st.caption("Just A Rather Very Intelligent Student")
     st.divider()
 
-    # accept user input for HuggingFace API key and save in environment variable
+    # display disclaimer
+    with st.status("Disclaimer", expanded=False, state="error"):
+        st.write(
+            """This software application employs open-source models sourced from Hugging Face, seamlessly integrated through an API. 
+            Kindly refrain from submitting personal information or documents governed by data protection or copyright regulations. The provider assumes no liability for any consequences arising from such submissions.""",
+        )
+
+    # accept user input for HuggingFace API key and save it in environment variable
     os.environ["HUGGINGFACE_API_TOKEN"] = st.text_input(
         "HuggingFace API Key", type="password"
     )
@@ -48,6 +51,7 @@ with st.sidebar:
 
     add_vertical_space(2)
 
+    # upload file component
     uploaded_file = st.file_uploader(
         "Upload a file", type=["pdf"], on_change=reset_file
     )
@@ -63,6 +67,7 @@ for message in st.session_state.messages:
     with st.chat_message(name=message["role"], avatar=avatar):
         st.write(message["content"])
 
+
 # process uploaded file
 if uploaded_file and st.session_state.file[0]["processed"] == False:
     fp = FileProcessor()
@@ -72,6 +77,7 @@ if uploaded_file and st.session_state.file[0]["processed"] == False:
         "processed": True,
         "processor": fp,
     }
+    # display progress
     with st.status("Processing file...", expanded=True) as status:
         st.write("Extracting text from file")
         time.sleep(1)
@@ -92,15 +98,15 @@ if prompt and not uploaded_file and st.session_state.file[0]["processed"] == Fal
 
     with st.chat_message(name="assistant", avatar="🤖"):
         # generate response
-        response = "Hello World Test"
+        response = "Please upload a file so that I can answer the question"
         # store response in session_state
         st.session_state.messages.append({"role": "assistant", "content": response})
         # simulate thinking process
         with st.spinner("Thinking..."):
             time.sleep(3)
         # display response message
-        message_placeholder = st.empty()
         # simulate typing process
+        message_placeholder = st.empty()
         full_response = str()
         for chunk in response.split():
             full_response += chunk + " "
@@ -130,8 +136,9 @@ if prompt and uploaded_file and st.session_state.file[0]["processed"] == True:
             st.session_state.messages.append({"role": "assistant", "content": response})
             time.sleep(2)
 
-        message_placeholder = st.empty()
+        # display response message
         # simulate typing process
+        message_placeholder = st.empty()
         full_response = str()
         for chunk in response.split():
             full_response += chunk + " "
