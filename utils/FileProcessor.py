@@ -173,4 +173,6 @@ class FileProcessor:
         matched_documents = vector_store.similarity_search_by_vector(
             embedded_query, n_results=n_results
         )
-        return matched_documents
+        matched_chunks = [matched_documents[i] for i in range(n_results)]
+
+        return matched_chunks
