@@ -11,7 +11,6 @@ from sentence_transformers import SentenceTransformer
 from sklearn.metrics.pairwise import cosine_similarity
 
 logger.basicConfig(level=logger.INFO)
-# TODO: format document, add docstrings, add comments
 
 
 class FileProcessor:
@@ -60,6 +59,7 @@ class FileProcessor:
     def extract_text(self, document: fitz.fitz.Document) -> str:
         logger.info("Extracting text from document")
         text = str()
+        # iterate over pages and extract text
         for page in document:
             try:
                 text += page.get_text() + " "
@@ -121,20 +121,26 @@ class FileProcessor:
     def init_vector_db(
         chunks: list,
     ):
-        """Create vectorstore from chunks and embeddings
+        """Create vectorstore using chunks and pre-trained embeddings
 
         Args:
             chunks (list): chunks from text
 
         Returns:
-            vectorstore: vectorstore from faiss containing chunks
+            vectorstore: faiss vectorstore
         """
+        # load embeddings
         embeddings = HuggingFaceEmbeddings()
+        # initialize vectorstore
         vectorstore = FAISS.from_texts(chunks, embeddings)
         return vectorstore
 
-    def process_pdf(self, file):
-        """Wrapper function to handle processing of pdf document"""
+    def process_pdf(self, file) -> None:
+        """Wrapper function to handle processing of pdf document
+
+        Args:
+            file (file): pdf file
+        """
         logger.info("Processing pdf file")
         logger.info("Extracting text from document")
         try:
@@ -167,12 +173,15 @@ class FileProcessor:
         """
         vector_store = self.vectordb
 
+        # load embeddings from hugging face
         embeddings = HuggingFaceEmbeddings()
         embedded_query = embeddings.embed_query(prompt)
 
+        # get matched documents based on prompt in ascending score order
         matched_documents = vector_store.similarity_search_by_vector(
             embedded_query, n_results=n_results
         )
+        # select only the first n_results
         matched_chunks = [matched_documents[i] for i in range(n_results)]
 
         return matched_chunks
