@@ -8,11 +8,18 @@ Repository for the PDF-Chatbot. Detailed report about the development process as
 ![Process.png](data/Process.png)
 
 
-### Text Extraktion Model
-
+### Text Extraction
+- python lib vs OCR
+  - python lib: structure based text extraction -> no format context
+  - OCR: ML based approach to additionally detect document structure for more complete information
+- custom OCR model based on [LayoutParser](https://github.com/Layout-Parser/layout-parser)
+- annotations done via [LabelStudio](https://labelstud.io/)
+- training done on local RTX 2070S GPU ~2h
+- shows promise, but not enough to provide a reliable benefit over simple python extraction
+- ended up with structure based extraction due to time / effort constraints in regards to building a fully functional custom OCR model
 
 ### Semantic Chunking
-In order to improve the way how the text is splitted, we implemented a different approach. This approach tries to identifies chunk points based in semantics. Further explanaition and code can be found [here]()
+In order to improve the way how the text is splitted, we implemented a different approach. This approach tries to identifies chunk points based on semantics. Further explanaition and code can be found [here]()
 
 ### Models
 - we tested three models using a open source lecture set from MIT -> [Lecture Notes](data/test_lecture_set.pdf)
