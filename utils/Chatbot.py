@@ -6,9 +6,7 @@ from langchain.prompts import PromptTemplate
 class Chatbot:
     def __init__(self, **kgwars):
         # set hugging face model
-        self.llm = HuggingFaceHub(
-            repo_id="tiiuae/falcon-7b-instruct", model_kwargs=kgwars
-        )
+        self.llm = HuggingFaceHub(repo_id="google/flan-t5-xxl", model_kwargs=kgwars)
         # create prompt
         self.prompt = PromptTemplate(
             input_variables=["question", "context"],
