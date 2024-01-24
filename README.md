@@ -1,7 +1,7 @@
 # STUDENTS GPT
 
 ## What is it
-Repository for the JARVIS PDF-Chatbot. Detailed report about the development process as well as some learnings can be found [here](./report.pdf).
+Repository for the JARVIS PDF-Chatbot. Detailed report about the development process as well as some learnings can be found [here](./documentation/Report.pdf).
 
 ### Project Scope
 Building Process that accepts user inputs as well as files, processes these files and search for user input.
@@ -32,7 +32,7 @@ In order to improve the way how the text is splitted, we implemented a different
   - [FLAN-T5-xxl](https://huggingface.co/google/flan-t5-xxl)
   - [DistilBERT finetuned on SQuAD](https://huggingface.co/distilbert-base-uncased-distilled-squad)
 - Models are compaired and evaluated based on the following categories
-- Evaluation and test results can be found [here]()
+- Evaluation and test results can be found [here](./documentation/Evaluierung.xlsx)
 
 ## Collaborators
 + Lars Kurschilgen
