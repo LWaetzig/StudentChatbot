@@ -43,10 +43,10 @@ with st.sidebar:
         )
 
     # accept user input for HuggingFace API key and save it in environment variable
-    os.environ["HUGGINGFACE_API_TOKEN"] = st.text_input(
+    os.environ["HUGGINGFACEHUB_API_TOKEN"] = st.text_input(
         "HuggingFace API Key", type="password"
     )
-    if os.environ["HUGGINGFACE_API_TOKEN"]:
+    if os.environ["HUGGINGFACEHUB_API_TOKEN"]:
         st.success("API Key saved!")
 
     add_vertical_space(2)
