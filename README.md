@@ -1,10 +1,12 @@
 # STUDENTS GPT
 
 ## What is it
-Repository for the JARVIS PDF-Chatbot. Detailed report about the development process as well as some learnings can be found [here](./documentation/Report.pdf).
+Chatbot to summarize uploaded pdf files.
+
+Detailed report about the development process as well as some learnings can be found [here](./documentation/Report.pdf).
 
 ### Project Scope
-Building Process that accepts user inputs as well as files, processes these files and search for user input.
+Building a process that accepts user inputs as well as files, processes these files and search for user input.
 The following image describes the process schematically:
 <br>
 <img src="data/Process.png" alt="process" width="500">
