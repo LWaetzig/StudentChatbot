@@ -1,4 +1,4 @@
-# STUDENTS GPT
+# Student Chatbot
 
 ## What is it
 Chatbot to summarize uploaded pdf files.
